@@ -4,6 +4,7 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from config import setup_logging
@@ -166,6 +167,19 @@ async def update_conditions(req: ConditionUpdateRequest):
 async def parse_conditions(cube_content: dict):
     conditions = condition_editor.parse_conditions(cube_content)
     return {"conditions": conditions}
+
+
+@app.get("/api/download/{file_name}")
+async def download_file(file_name: str):
+    output_dir = config.OUTPUT_DIR
+    file_path = os.path.join(output_dir, file_name)
+    if not os.path.exists(file_path):
+        return {"success": False, "message": f"文件不存在: {file_name}"}
+    return FileResponse(
+        path=file_path,
+        filename=file_name,
+        media_type="application/json",
+    )
 
 
 if __name__ == "__main__":

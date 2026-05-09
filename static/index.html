@@ -12,28 +12,24 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .header-left{display:flex;align-items:center;gap:16px}
 .logo{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),#6c5ce7);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;color:#fff}
 .header h1{font-size:22px;font-weight:600;background:linear-gradient(90deg,#e0e6ff,#8892b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
-.header-status{display:flex;align-items:center;gap:8px;color:var(--text-secondary);font-size:13px}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+.header-status{display:flex;align-items:center;gap:12px;font-size:13px;color:var(--text-secondary)}
+.status-dot{width:8px;height:8px;border-radius:50%;animation:pulse 2s infinite}
+.status-dot.online{background:var(--success)}
+.status-dot.offline{background:var(--danger)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 .container{display:flex;height:calc(100vh - 73px);overflow:hidden}
-.sidebar{width:320px;min-width:320px;background:var(--bg-secondary);border-right:1px solid var(--border-color);display:flex;flex-direction:column;overflow:hidden}
-.sidebar-header{padding:20px;border-bottom:1px solid var(--border-color)}
-.sidebar-header h2{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
-.sidebar-header p{font-size:12px;color:var(--text-muted)}
-.template-list{flex:1;overflow-y:auto;padding:12px}
-.template-list::-webkit-scrollbar{width:4px}
-.template-list::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:2px}
-.template-item{padding:14px 16px;border-radius:var(--radius);cursor:pointer;transition:all 0.2s;border:1px solid transparent;margin-bottom:8px}
-.template-item:hover{background:var(--bg-card);border-color:var(--border-color)}
-.template-item.active{background:var(--bg-card);border-color:var(--accent);box-shadow:0 0 12px var(--accent-glow)}
-.template-item .t-name{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
-.template-item .t-desc{font-size:12px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.template-item .t-tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:4px;font-size:11px;background:rgba(26,107,255,0.15);color:var(--accent)}
-.template-detail{border-top:1px solid var(--border-color);padding:16px 20px;background:var(--bg-card);display:none}
-.template-detail.show{display:block}
-.template-detail h3{font-size:15px;font-weight:600;margin-bottom:10px;color:var(--accent)}
-.template-detail p{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:8px}
-.template-detail .detail-label{font-size:12px;color:var(--text-muted);margin-bottom:4px}
+.sidebar{width:300px;min-width:300px;background:var(--bg-secondary);border-right:1px solid var(--border-color);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-section{border-bottom:1px solid var(--border-color)}
+.sidebar-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.sidebar-header h2{font-size:14px;font-weight:600;color:var(--text-primary)}
+.sidebar-header .count{font-size:12px;color:var(--text-muted)}
+.sidebar-list{max-height:200px;overflow-y:auto;padding:8px 12px}
+.sidebar-list::-webkit-scrollbar{width:4px}
+.sidebar-list::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:2px}
+.sidebar-item{padding:10px 14px;border-radius:6px;cursor:pointer;transition:all 0.2s;margin-bottom:4px;font-size:13px;color:var(--text-secondary);display:flex;align-items:center;gap:8px}
+.sidebar-item:hover{background:var(--bg-card);color:var(--text-primary)}
+.sidebar-item .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+.sidebar-item .label{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .main{flex:1;overflow-y:auto;padding:24px 32px}
 .main::-webkit-scrollbar{width:6px}
 .main::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:3px}
@@ -43,51 +39,39 @@ body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",s
 .section-title .icon.blue{background:rgba(26,107,255,0.15);color:var(--accent)}
 .section-title .icon.green{background:var(--success-bg);color:var(--success)}
 .section-title .icon.orange{background:var(--warning-bg);color:var(--warning)}
-.input-group{margin-bottom:16px}
-.input-group label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:8px;font-weight:500}
-textarea{width:100%;min-height:120px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:14px;color:var(--text-primary);font-size:14px;line-height:1.6;resize:vertical;transition:border-color 0.2s;font-family:inherit}
+textarea{width:100%;min-height:100px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:14px;color:var(--text-primary);font-size:14px;line-height:1.6;resize:vertical;transition:border-color 0.2s;font-family:inherit}
 textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
 textarea::placeholder{color:var(--text-muted)}
-.controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
-.switch-group{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)}
-.switch-group input[type="checkbox"]{appearance:none;width:40px;height:22px;background:var(--border-color);border-radius:11px;position:relative;cursor:pointer;transition:background 0.3s}
-.switch-group input[type="checkbox"]::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform 0.3s}
-.switch-group input[type="checkbox"]:checked{background:var(--accent)}
-.switch-group input[type="checkbox"]:checked::after{transform:translateX(18px)}
 .btn{padding:10px 24px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
 .btn-primary{background:linear-gradient(135deg,var(--accent),#4d7cff);color:#fff;box-shadow:0 4px 16px var(--accent-glow)}
 .btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
-.btn-primary:active{transform:translateY(0)}
 .btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 .btn-success{background:var(--success);color:#fff}
 .btn-success:hover{background:#00c080}
-.btn-success:disabled{opacity:0.5;cursor:not-allowed}
 .btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .btn-outline:hover{background:rgba(26,107,255,0.1)}
 .btn-outline:disabled{opacity:0.5;cursor:not-allowed}
-.loading-overlay{display:none;position:relative;padding:40px;text-align:center}
+.btn-sm{padding:6px 14px;font-size:12px}
+.controls{display:flex;align-items:center;gap:12px;margin-top:16px;flex-wrap:wrap}
+.loading-overlay{display:none;text-align:center;padding:40px}
 .loading-overlay.show{display:block}
 .spinner{width:48px;height:48px;border:3px solid var(--border-color);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .loading-text{color:var(--text-secondary);font-size:14px}
-.loading-steps{margin-top:16px;text-align:left;max-width:400px;margin-left:auto;margin-right:auto}
-.loading-step{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;color:var(--text-muted)}
-.loading-step .step-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
-.loading-step .step-icon.pending{border:2px solid var(--border-color)}
-.loading-step .step-icon.active{border:2px solid var(--accent);color:var(--accent);animation:pulse 1s infinite}
-.loading-step .step-icon.done{background:var(--success);color:#fff;border:none}
 .result-panel{display:none}
 .result-panel.show{display:block}
 .result-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-color)}
 .result-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500}
 .result-badge.success{background:var(--success-bg);color:var(--success)}
 .result-badge.warning{background:var(--warning-bg);color:var(--warning)}
-.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
-.result-card{background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:16px}
+.result-badge.error{background:var(--danger-bg);color:var(--danger)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px}
+.result-card{background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:14px}
 .result-card .rc-label{font-size:12px;color:var(--text-muted);margin-bottom:6px}
-.result-card .rc-value{font-size:16px;font-weight:600;color:var(--text-primary)}
+.result-card .rc-value{font-size:15px;font-weight:600;color:var(--text-primary)}
 .result-card .rc-value.accent{color:var(--accent)}
 .result-card .rc-value.success{color:var(--success)}
+.result-card .rc-value.warning{color:var(--warning)}
 .confidence-bar{height:6px;background:var(--border-color);border-radius:3px;margin-top:8px;overflow:hidden}
 .confidence-fill{height:100%;border-radius:3px;transition:width 1s ease;background:linear-gradient(90deg,var(--accent),var(--success))}
 .file-info{background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
@@ -95,31 +79,24 @@ textarea::placeholder{color:var(--text-muted)}
 .file-meta{flex:1}
 .file-meta .file-name{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
 .file-meta .file-path{font-size:12px;color:var(--text-muted);font-family:monospace}
-.file-actions{display:flex;gap:8px}
-.import-result{margin-top:16px;padding:16px;border-radius:var(--radius);display:none}
-.import-result.show{display:block}
-.import-result.success{background:var(--success-bg);border:1px solid rgba(0,214,143,0.3)}
-.import-result.error{background:var(--danger-bg);border:1px solid rgba(255,61,113,0.3)}
-.import-result .ir-title{font-size:14px;font-weight:600;margin-bottom:8px}
-.import-result.success .ir-title{color:var(--success)}
-.import-result.error .ir-title{color:var(--danger)}
-.import-result p{font-size:13px;color:var(--text-secondary);line-height:1.6}
-.clean-rules{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
-.rule-checkbox{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);cursor:pointer;transition:all 0.2s;font-size:13px;color:var(--text-secondary)}
-.rule-checkbox:hover{border-color:var(--border-hover)}
-.rule-checkbox input[type="checkbox"]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
-.rule-checkbox.checked{border-color:var(--accent);background:rgba(26,107,255,0.08);color:var(--text-primary)}
-.clean-report{display:none}
-.clean-report.show{display:block}
-.report-table{width:100%;border-collapse:collapse;margin-top:12px}
-.report-table th,.report-table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-color);font-size:13px}
-.report-table th{color:var(--text-muted);font-weight:500;background:var(--bg-input)}
-.report-table td{color:var(--text-secondary)}
-.report-table tr:hover td{background:rgba(26,107,255,0.03)}
-.report-summary{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
-.report-stat{padding:12px 20px;background:var(--bg-input);border-radius:var(--radius);border:1px solid var(--border-color)}
-.report-stat .stat-value{font-size:20px;font-weight:700;color:var(--accent)}
-.report-stat .stat-label{font-size:12px;color:var(--text-muted);margin-top:4px}
+.conditions-section{margin-top:16px}
+.conditions-title{font-size:14px;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.condition-list{display:flex;flex-direction:column;gap:10px}
+.condition-item{background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px}
+.condition-item .ci-label{flex:1}
+.condition-item .ci-field{font-size:13px;font-weight:500;color:var(--text-primary)}
+.condition-item .ci-type{font-size:11px;color:var(--text-muted);margin-top:2px}
+.condition-item input,.condition-item select{background:var(--bg-secondary);border:1px solid var(--border-color);border-radius:4px;padding:6px 10px;color:var(--text-primary);font-size:13px;font-family:inherit}
+.condition-item input:focus,.condition-item select:focus{outline:none;border-color:var(--accent)}
+.condition-item input[type="text"]{width:120px}
+.condition-item input.range-input{width:80px}
+.referenced-templates{margin-top:12px;padding:12px;background:var(--bg-input);border-radius:var(--radius);border:1px solid var(--border-color)}
+.referenced-templates .rt-label{font-size:12px;color:var(--text-muted);margin-bottom:8px}
+.referenced-templates .rt-list{display:flex;flex-wrap:wrap;gap:6px}
+.referenced-templates .rt-tag{padding:4px 10px;border-radius:4px;font-size:12px;background:rgba(26,107,255,0.1);color:var(--accent);border:1px solid rgba(26,107,255,0.2)}
+.validation-errors{margin-top:12px;padding:12px;background:var(--danger-bg);border:1px solid rgba(255,61,113,0.3);border-radius:var(--radius)}
+.validation-errors .ve-title{font-size:13px;font-weight:600;color:var(--danger);margin-bottom:8px}
+.validation-errors .ve-item{font-size:12px;color:var(--text-secondary);padding:4px 0}
 .toast{position:fixed;top:80px;right:24px;padding:14px 24px;border-radius:var(--radius);font-size:14px;z-index:1000;transform:translateX(120%);transition:transform 0.3s ease;box-shadow:var(--shadow)}
 .toast.show{transform:translateX(0)}
 .toast.success{background:var(--success);color:#fff}
@@ -135,24 +112,25 @@ textarea::placeholder{color:var(--text-muted)}
 <h1>AI智能建模引擎</h1>
 </div>
 <div class="header-status">
-<div class="status-dot"></div>
-<span>服务运行中</span>
+<div class="status-dot online" id="statusDot"></div>
+<span id="statusText">检测中...</span>
 </div>
 </div>
 <div class="container">
 <div class="sidebar">
+<div class="sidebar-section">
 <div class="sidebar-header">
-<h2>模型模板库</h2>
-<p>共 <span id="templateCount">0</span> 个模板可用</p>
+<h2>数据源表</h2>
+<span class="count" id="schemaCount">0</span>
 </div>
-<div class="template-list" id="templateList"></div>
-<div class="template-detail" id="templateDetail">
-<h3 id="detailName"></h3>
-<p id="detailDesc"></p>
-<div class="detail-label">适用场景</div>
-<p id="detailScene"></p>
-<div class="detail-label">输出格式</div>
-<p id="detailFormat"></p>
+<div class="sidebar-list" id="schemaList"></div>
+</div>
+<div class="sidebar-section">
+<div class="sidebar-header">
+<h2>模型模板</h2>
+<span class="count" id="templateCount">0</span>
+</div>
+<div class="sidebar-list" id="templateList"></div>
 </div>
 </div>
 <div class="main">
@@ -161,30 +139,20 @@ textarea::placeholder{color:var(--text-muted)}
 <span class="icon blue">&#9998;</span>
 智能建模
 </div>
-<div class="input-group">
-<label>需求描述</label>
-<textarea id="requirementInput" placeholder="请输入建模需求描述，例如：分析账户试卡行为，找出小额试探后大额进账的账户"></textarea>
+<div style="margin-bottom:16px">
+<label style="display:block;font-size:13px;color:var(--text-secondary);margin-bottom:8px">需求描述</label>
+<textarea id="requirementInput" placeholder="请输入建模需求描述，例如：&#10;分析账户试卡行为，找出小额试探后大额进账的账户&#10;查询资金快进快出的账户，交易金额大于1万&#10;分析同IP和MAC地址的银行账户"></textarea>
 </div>
 <div class="controls">
-<div class="switch-group">
-<input type="checkbox" id="autoImport">
-<span>自动导入到平台</span>
-</div>
 <button class="btn btn-primary" id="generateBtn" onclick="generateModel()">&#9889; 生成模型</button>
 </div>
 <div class="loading-overlay" id="loadingOverlay">
 <div class="spinner"></div>
-<div class="loading-text" id="loadingText">正在分析需求...</div>
-<div class="loading-steps">
-<div class="loading-step"><span class="step-icon active" id="step1">&#9679;</span><span id="step1Text">解析需求描述</span></div>
-<div class="loading-step"><span class="step-icon pending" id="step2">&#9679;</span><span id="step2Text">匹配模型模板</span></div>
-<div class="loading-step"><span class="step-icon pending" id="step3">&#9679;</span><span id="step3Text">生成模型文件</span></div>
-<div class="loading-step"><span class="step-icon pending" id="step4">&#9679;</span><span id="step4Text">校验模型结构</span></div>
-</div>
+<div class="loading-text" id="loadingText">正在生成模型...</div>
 </div>
 <div class="result-panel" id="resultPanel">
 <div class="result-header">
-<span class="result-badge success">&#10003; 生成成功</span>
+<span class="result-badge" id="resultBadge"></span>
 </div>
 <div class="result-grid">
 <div class="result-card">
@@ -197,68 +165,50 @@ textarea::placeholder{color:var(--text-muted)}
 <div class="confidence-bar"><div class="confidence-fill" id="confidenceFill" style="width:0%"></div></div>
 </div>
 <div class="result-card">
-<div class="rc-label">匹配模板</div>
-<div class="rc-value" id="resultTemplate">-</div>
+<div class="rc-label">重试次数</div>
+<div class="rc-value" id="resultRetry">-</div>
 </div>
 <div class="result-card">
-<div class="rc-label">生成耗时</div>
-<div class="rc-value" id="resultTime">-</div>
+<div class="rc-label">校验状态</div>
+<div class="rc-value" id="resultValidation">-</div>
 </div>
 </div>
-<div class="file-info">
+<div class="referenced-templates" id="referencedTemplates" style="display:none">
+<div class="rt-label">参考模板</div>
+<div class="rt-list" id="rtList"></div>
+</div>
+<div class="file-info" id="fileInfo" style="display:none">
 <div class="file-icon">&#128196;</div>
 <div class="file-meta">
 <div class="file-name" id="resultFileName">-</div>
 <div class="file-path" id="resultFilePath">-</div>
 </div>
-<div class="file-actions">
-<button class="btn btn-outline" onclick="downloadFile()">&#11015; 下载</button>
-<button class="btn btn-success" id="importBtn" onclick="importModel()">&#128230; 导入</button>
+<div style="display:flex;gap:8px">
+<button class="btn btn-outline btn-sm" onclick="downloadFile()">&#11015; 下载</button>
 </div>
 </div>
-<div class="import-result" id="importResult">
-<div class="ir-title" id="importTitle"></div>
-<p id="importMessage"></p>
+<div class="conditions-section" id="conditionsSection" style="display:none">
+<div class="conditions-title">
+<span class="icon green" style="width:22px;height:22px;font-size:11px">&#9881;</span>
+筛选条件微调
+</div>
+<div class="condition-list" id="conditionList"></div>
+<div style="margin-top:12px;display:flex;gap:8px">
+<button class="btn btn-primary btn-sm" onclick="applyConditions()">&#10003; 应用修改</button>
 </div>
 </div>
+<div class="validation-errors" id="validationErrors" style="display:none">
+<div class="ve-title">校验错误</div>
+<div id="veList"></div>
 </div>
-<div class="section">
-<div class="section-title">
-<span class="icon green">&#9881;</span>
-数据清洗
-</div>
-<div class="input-group">
-<label>JSON数据输入</label>
-<textarea id="cleanInput" placeholder='请输入JSON格式数据，例如：[{"id_card":"110101199001011234","phone":"13800138000","amount":"1,000.50"}]' style="min-height:100px"></textarea>
-</div>
-<div class="input-group">
-<label>清洗规则</label>
-<div class="clean-rules" id="cleanRules">
-<label class="rule-checkbox"><input type="checkbox" value="id_card" onchange="toggleRule(this)"> 身份证校验</label>
-<label class="rule-checkbox"><input type="checkbox" value="phone" onchange="toggleRule(this)"> 手机号提取</label>
-<label class="rule-checkbox"><input type="checkbox" value="amount" onchange="toggleRule(this)"> 金额标准化</label>
-<label class="rule-checkbox"><input type="checkbox" value="dedup" onchange="toggleRule(this)"> 去重</label>
-<label class="rule-checkbox"><input type="checkbox" value="time" onchange="toggleRule(this)"> 时间标准化</label>
-</div>
-</div>
-<button class="btn btn-primary" id="cleanBtn" onclick="cleanData()">&#128295; 开始清洗</button>
-<div class="clean-report" id="cleanReport">
-<div class="result-header">
-<span class="result-badge success">&#10003; 清洗完成</span>
-</div>
-<table class="report-table">
-<thead><tr><th>规则</th><th>处理前</th><th>处理后</th><th>变更数</th></tr></thead>
-<tbody id="reportBody"></tbody>
-</table>
-<div class="report-summary" id="reportSummary"></div>
 </div>
 </div>
 </div>
 </div>
 <div class="toast" id="toast"></div>
 <script>
-var currentFileUrl='';
-var currentFileName='';
+var currentResult=null;
+var currentConditions=[];
 
 function showToast(msg,type){
 var t=document.getElementById('toast');
@@ -267,201 +217,211 @@ t.className='toast '+type+' show';
 setTimeout(function(){t.classList.remove('show')},3000);
 }
 
+function checkHealth(){
+fetch('/api/health').then(function(r){return r.json()}).then(function(data){
+var dot=document.getElementById('statusDot');
+var text=document.getElementById('statusText');
+if(data.llm_available){
+dot.className='status-dot online';
+text.textContent='LLM服务正常 | '+data.templates_loaded+'模板 | '+data.schemas_loaded+'数据表';
+}else{
+dot.className='status-dot offline';
+text.textContent='LLM不可用 | '+data.templates_loaded+'模板 | '+data.schemas_loaded+'数据表';
+}
+}).catch(function(){
+document.getElementById('statusDot').className='status-dot offline';
+document.getElementById('statusText').textContent='服务连接失败';
+});
+}
+
+function loadSchemas(){
+fetch('/api/schemas').then(function(r){return r.json()}).then(function(data){
+var list=document.getElementById('schemaList');
+document.getElementById('schemaCount').textContent=data.tables.length;
+data.tables.forEach(function(t){
+var item=document.createElement('div');
+item.className='sidebar-item';
+item.innerHTML='<span class="dot"></span><span class="label" title="'+t.name+'">'+t.label+' ('+t.fields.length+'字段)</span>';
+list.appendChild(item);
+});
+}).catch(function(){});
+}
+
 function loadTemplates(){
 fetch('/api/templates').then(function(r){return r.json()}).then(function(data){
 var list=document.getElementById('templateList');
 document.getElementById('templateCount').textContent=data.templates.length;
-data.templates.forEach(function(tpl){
+data.templates.forEach(function(t){
 var item=document.createElement('div');
-item.className='template-item';
-item.innerHTML='<div class="t-name">'+tpl.name+'</div><div class="t-desc">'+tpl.description+'</div><span class="t-tag">'+tpl.category+'</span>';
-item.onclick=function(){
-document.querySelectorAll('.template-item').forEach(function(el){el.classList.remove('active')});
-item.classList.add('active');
-showTemplateDetail(tpl);
-};
+item.className='sidebar-item';
+item.innerHTML='<span class="dot"></span><span class="label" title="'+t.bz+'">'+t.title+'</span>';
 list.appendChild(item);
 });
-}).catch(function(err){showToast('加载模板失败','error')});
-}
-
-function showTemplateDetail(tpl){
-var d=document.getElementById('templateDetail');
-document.getElementById('detailName').textContent=tpl.name;
-document.getElementById('detailDesc').textContent=tpl.description;
-document.getElementById('detailScene').textContent=tpl.scene||'通用建模场景';
-document.getElementById('detailFormat').textContent=tpl.output_format||'.cube 模型文件';
-d.classList.add('show');
-}
-
-function resetSteps(){
-for(var i=1;i<=4;i++){
-var s=document.getElementById('step'+i);
-s.className='step-icon '+(i===1?'active':'pending');
-}
-}
-
-function advanceStep(n){
-for(var i=1;i<=4;i++){
-var s=document.getElementById('step'+i);
-if(i<n)s.className='step-icon done';
-else if(i===n)s.className='step-icon active';
-else s.className='step-icon pending';
-}
-var texts=['解析需求描述','匹配模型模板','生成模型文件','校验模型结构'];
-document.getElementById('loadingText').textContent=texts[n-1]+'...';
+}).catch(function(){});
 }
 
 function generateModel(){
 var req=document.getElementById('requirementInput').value.trim();
 if(!req){showToast('请输入建模需求描述','error');return;}
-var autoImport=document.getElementById('autoImport').checked;
 var btn=document.getElementById('generateBtn');
 btn.disabled=true;
 document.getElementById('resultPanel').classList.remove('show');
-document.getElementById('importResult').classList.remove('show');
 document.getElementById('loadingOverlay').classList.add('show');
-resetSteps();
-var stepInterval=setInterval(function(){
-var active=document.querySelector('.step-icon.active');
-if(active){
-var id=active.id.replace('step','');
-var next=parseInt(id)+1;
-if(next<=4)advanceStep(next);
-}
-},800);
-fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requirement:req,auto_import:autoImport})}).then(function(r){return r.json()}).then(function(data){
-clearInterval(stepInterval);
-for(var i=1;i<=4;i++){document.getElementById('step'+i).className='step-icon done';}
-setTimeout(function(){
+document.getElementById('loadingText').textContent='正在生成模型...';
+fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({description:req})}).then(function(r){return r.json()}).then(function(data){
 document.getElementById('loadingOverlay').classList.remove('show');
 btn.disabled=false;
-if(data.status==='success'){
+currentResult=data;
 showResult(data);
-if(autoImport&&data.import_result){
-showImportResult(data.import_result);
-}
-showToast('模型生成成功','success');
-}else{
-showToast(data.message||'生成失败','error');
-}
-},500);
 }).catch(function(err){
-clearInterval(stepInterval);
 document.getElementById('loadingOverlay').classList.remove('show');
 btn.disabled=false;
-showToast('请求失败，请检查服务状态','error');
+showToast('请求失败: '+err.message,'error');
 });
 }
 
 function showResult(data){
+var panel=document.getElementById('resultPanel');
+var badge=document.getElementById('resultBadge');
+if(data.success){
+if(data.validation_passed){
+badge.className='result-badge success';
+badge.innerHTML='&#10003; 生成成功';
+}else{
+badge.className='result-badge warning';
+badge.innerHTML='&#9888; 生成完成（校验未通过）';
+}
+}else{
+badge.className='result-badge error';
+badge.innerHTML='&#10007; 生成失败';
+}
+
 document.getElementById('resultType').textContent=data.model_type||'-';
 var conf=data.confidence||0;
-document.getElementById('resultConfidence').textContent=(conf*100).toFixed(1)+'%';
+document.getElementById('resultConfidence').textContent=(conf*100).toFixed(0)+'%';
 setTimeout(function(){document.getElementById('confidenceFill').style.width=(conf*100)+'%';},100);
-document.getElementById('resultTemplate').textContent=data.template_name||'-';
-document.getElementById('resultTime').textContent=data.elapsed?data.elapsed.toFixed(2)+'s':'-';
+document.getElementById('resultRetry').textContent=(data.retry_count||0)+'次';
+
+var valEl=document.getElementById('resultValidation');
+if(data.validation_passed){
+valEl.textContent='通过';
+valEl.className='rc-value success';
+}else{
+valEl.textContent='未通过';
+valEl.className='rc-value warning';
+}
+
+if(data.referenced_templates&&data.referenced_templates.length>0){
+var rtDiv=document.getElementById('referencedTemplates');
+var rtList=document.getElementById('rtList');
+rtList.innerHTML='';
+data.referenced_templates.forEach(function(t){
+var tag=document.createElement('span');
+tag.className='rt-tag';
+tag.textContent=t;
+rtList.appendChild(tag);
+});
+rtDiv.style.display='block';
+}
+
+if(data.file_path){
+document.getElementById('fileInfo').style.display='flex';
 document.getElementById('resultFileName').textContent=data.file_name||'-';
 document.getElementById('resultFilePath').textContent=data.file_path||'-';
-currentFileUrl=data.file_url||'';
-currentFileName=data.file_name||'';
-document.getElementById('resultPanel').classList.add('show');
+}
+
+if(data.conditions&&data.conditions.length>0){
+currentConditions=data.conditions;
+showConditions(data.conditions);
+}
+
+if(data.validation_errors&&data.validation_errors.length>0){
+var veDiv=document.getElementById('validationErrors');
+var veList=document.getElementById('veList');
+veList.innerHTML='';
+data.validation_errors.forEach(function(e){
+var div=document.createElement('div');
+div.className='ve-item';
+div.textContent=(e.path||'')+': '+(e.message||'');
+veList.appendChild(div);
+});
+veDiv.style.display='block';
+}else{
+document.getElementById('validationErrors').style.display='none';
+}
+
+if(data.message&&!data.success){
+showToast(data.message,'error');
+}
+
+panel.classList.add('show');
+}
+
+function showConditions(conditions){
+var list=document.getElementById('conditionList');
+list.innerHTML='';
+conditions.forEach(function(c,idx){
+var item=document.createElement('div');
+item.className='condition-item';
+var inputHtml='';
+if(c.type==='string'||c.type==='char'){
+inputHtml='<input type="text" data-idx="'+idx+'" value="'+(typeof c.current_value==='string'?c.current_value:'')+'" onchange="updateConditionValue('+idx+',this.value)">';
+}else if(c.type==='decimal'||c.type==='number'||c.type==='int'){
+var cv=c.current_value||{};
+if(typeof cv==='string')cv={charL:cv,charU:''};
+inputHtml='<input type="text" class="range-input" placeholder="最小值" value="'+(cv.charL||'')+'" onchange="updateRangeValue('+idx+',\'charL\',this.value)"> <span style="color:var(--text-muted)">~</span> <input type="text" class="range-input" placeholder="最大值" value="'+(cv.charU||'')+'" onchange="updateRangeValue('+idx+',\'charU\',this.value)">';
+}else if(c.type==='date'){
+var cv2=c.current_value||{};
+if(typeof cv2==='string')cv2={charL:cv2,charU:''};
+inputHtml='<input type="text" class="range-input" placeholder="开始日期" value="'+(cv2.charL||'')+'" onchange="updateRangeValue('+idx+',\'charL\',this.value)"> <span style="color:var(--text-muted)">~</span> <input type="text" class="range-input" placeholder="结束日期" value="'+(cv2.charU||'')+'" onchange="updateRangeValue('+idx+',\'charU\',this.value)">';
+}
+item.innerHTML='<div class="ci-label"><div class="ci-field">'+c.title+' ('+c.field+')</div><div class="ci-type">'+c.type+' | 表: '+c.table_id+'</div></div>'+inputHtml;
+list.appendChild(item);
+});
+document.getElementById('conditionsSection').style.display='block';
+}
+
+function updateConditionValue(idx,val){
+currentConditions[idx].current_value=val;
+}
+
+function updateRangeValue(idx,field,val){
+if(!currentConditions[idx].current_value||typeof currentConditions[idx].current_value==='string'){
+currentConditions[idx].current_value={charL:'',charU:''};
+}
+currentConditions[idx].current_value[field]=val;
+}
+
+function applyConditions(){
+if(!currentResult||!currentResult.cube_content){showToast('无可修改的模型','error');return;}
+var updates=currentConditions.map(function(c){
+var update={table_id:c.table_id,field:c.field};
+if(c.type==='string'||c.type==='char'){
+update.value=c.current_value;
+}else{
+update.value=c.current_value;
+}
+return update;
+});
+fetch('/api/conditions',{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({cube_content:currentResult.cube_content,conditions:updates})}).then(function(r){return r.json()}).then(function(data){
+if(data.success){
+currentResult.cube_content=data.cube_content;
+showToast('条件已更新','success');
+}else{
+showToast('更新失败: '+(data.errors||[]).map(function(e){return e.message}).join('; '),'error');
+}
+}).catch(function(err){
+showToast('请求失败','error');
+});
 }
 
 function downloadFile(){
-if(!currentFileUrl){showToast('无可下载文件','error');return;}
-var a=document.createElement('a');
-a.href=currentFileUrl;
-a.download=currentFileName||'model.cube';
-a.click();
+if(!currentResult||!currentResult.file_name){showToast('无可下载文件','error');return;}
+window.location.href='/api/download/'+currentResult.file_name;
 }
 
-function importModel(){
-var btn=document.getElementById('importBtn');
-btn.disabled=true;
-btn.textContent='导入中...';
-fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({file_path:document.getElementById('resultFilePath').textContent})}).then(function(r){return r.json()}).then(function(data){
-btn.disabled=false;
-btn.textContent='📥 导入';
-showImportResult(data);
-}).catch(function(err){
-btn.disabled=false;
-btn.textContent='📥 导入';
-showToast('导入请求失败','error');
-});
-}
-
-function showImportResult(data){
-var el=document.getElementById('importResult');
-var title=document.getElementById('importTitle');
-var msg=document.getElementById('importMessage');
-if(data.status==='success'){
-el.className='import-result show success';
-title.textContent='导入成功';
-msg.textContent=data.message||'模型已成功导入到平台';
-}else{
-el.className='import-result show error';
-title.textContent='导入失败';
-msg.textContent=data.message||'导入过程中发生错误';
-}
-}
-
-function toggleRule(cb){
-var label=cb.parentElement;
-if(cb.checked)label.classList.add('checked');
-else label.classList.remove('checked');
-}
-
-function cleanData(){
-var input=document.getElementById('cleanInput').value.trim();
-if(!input){showToast('请输入JSON数据','error');return;}
-var rules=[];
-document.querySelectorAll('#cleanRules input[type="checkbox"]:checked').forEach(function(cb){rules.push(cb.value);});
-if(rules.length===0){showToast('请至少选择一条清洗规则','error');return;}
-var btn=document.getElementById('cleanBtn');
-btn.disabled=true;
-fetch('/api/clean',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:input,rules:rules})}).then(function(r){return r.json()}).then(function(data){
-btn.disabled=false;
-if(data.status==='success'){
-showCleanReport(data);
-showToast('数据清洗完成','success');
-}else{
-showToast(data.message||'清洗失败','error');
-}
-}).catch(function(err){
-btn.disabled=false;
-showToast('清洗请求失败','error');
-});
-}
-
-function showCleanReport(data){
-var body=document.getElementById('reportBody');
-body.innerHTML='';
-var report=data.report||[];
-var ruleNames={'id_card':'身份证校验','phone':'手机号提取','amount':'金额标准化','dedup':'去重','time':'时间标准化'};
-report.forEach(function(r){
-var tr=document.createElement('tr');
-tr.innerHTML='<td>'+ruleNames[r.rule]+'</td><td>'+r.before+'</td><td>'+r.after+'</td><td>'+r.changes+'</td>';
-body.appendChild(tr);
-});
-var summary=document.getElementById('reportSummary');
-summary.innerHTML='';
-var stats=data.summary||{};
-var statItems=[
-{value:stats.total||0,label:'总记录数'},
-{value:stats.cleaned||0,label:'清洗记录数'},
-{value:stats.invalid||0,label:'无效记录数'},
-{value:((stats.quality||0)*100).toFixed(1)+'%',label:'数据质量'}
-];
-statItems.forEach(function(s){
-var div=document.createElement('div');
-div.className='report-stat';
-div.innerHTML='<div class="stat-value">'+s.value+'</div><div class="stat-label">'+s.label+'</div>';
-summary.appendChild(div);
-});
-document.getElementById('cleanReport').classList.add('show');
-}
-
+checkHealth();
+loadSchemas();
 loadTemplates();
 </script>
 </body>
