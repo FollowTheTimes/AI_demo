@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI智能建模引擎</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg-primary:#0a0e27;--bg-secondary:#111638;--bg-card:#161b40;--bg-input:#0d1230;--border-color:#1e2a5a;--border-hover:#2a3f8f;--text-primary:#e0e6ff;--text-secondary:#8892b0;--text-muted:#5a6380;--accent:#1a6bff;--accent-hover:#2d7aff;--accent-glow:rgba(26,107,255,0.3);--success:#00d68f;--success-bg:rgba(0,214,143,0.1);--warning:#ffaa00;--warning-bg:rgba(255,170,0,0.1);--danger:#ff3d71;--danger-bg:rgba(255,61,113,0.1);--radius:8px;--radius-lg:12px;--shadow:0 4px 24px rgba(0,0,0,0.4)}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh;overflow-x:hidden}
+.header{background:linear-gradient(135deg,#0d1230 0%,#1a1f4e 100%);border-bottom:1px solid var(--border-color);padding:16px 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(10px)}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),#6c5ce7);border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:bold;color:#fff}
+.header h1{font-size:22px;font-weight:600;background:linear-gradient(90deg,#e0e6ff,#8892b0);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.header-status{display:flex;align-items:center;gap:8px;color:var(--text-secondary);font-size:13px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.container{display:flex;height:calc(100vh - 73px);overflow:hidden}
+.sidebar{width:320px;min-width:320px;background:var(--bg-secondary);border-right:1px solid var(--border-color);display:flex;flex-direction:column;overflow:hidden}
+.sidebar-header{padding:20px;border-bottom:1px solid var(--border-color)}
+.sidebar-header h2{font-size:16px;font-weight:600;color:var(--text-primary);margin-bottom:4px}
+.sidebar-header p{font-size:12px;color:var(--text-muted)}
+.template-list{flex:1;overflow-y:auto;padding:12px}
+.template-list::-webkit-scrollbar{width:4px}
+.template-list::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:2px}
+.template-item{padding:14px 16px;border-radius:var(--radius);cursor:pointer;transition:all 0.2s;border:1px solid transparent;margin-bottom:8px}
+.template-item:hover{background:var(--bg-card);border-color:var(--border-color)}
+.template-item.active{background:var(--bg-card);border-color:var(--accent);box-shadow:0 0 12px var(--accent-glow)}
+.template-item .t-name{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.template-item .t-desc{font-size:12px;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.template-item .t-tag{display:inline-block;margin-top:6px;padding:2px 8px;border-radius:4px;font-size:11px;background:rgba(26,107,255,0.15);color:var(--accent)}
+.template-detail{border-top:1px solid var(--border-color);padding:16px 20px;background:var(--bg-card);display:none}
+.template-detail.show{display:block}
+.template-detail h3{font-size:15px;font-weight:600;margin-bottom:10px;color:var(--accent)}
+.template-detail p{font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:8px}
+.template-detail .detail-label{font-size:12px;color:var(--text-muted);margin-bottom:4px}
+.main{flex:1;overflow-y:auto;padding:24px 32px}
+.main::-webkit-scrollbar{width:6px}
+.main::-webkit-scrollbar-thumb{background:var(--border-color);border-radius:3px}
+.section{background:var(--bg-card);border:1px solid var(--border-color);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px}
+.section-title{font-size:16px;font-weight:600;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.section-title .icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:14px}
+.section-title .icon.blue{background:rgba(26,107,255,0.15);color:var(--accent)}
+.section-title .icon.green{background:var(--success-bg);color:var(--success)}
+.section-title .icon.orange{background:var(--warning-bg);color:var(--warning)}
+.input-group{margin-bottom:16px}
+.input-group label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:8px;font-weight:500}
+textarea{width:100%;min-height:120px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:14px;color:var(--text-primary);font-size:14px;line-height:1.6;resize:vertical;transition:border-color 0.2s;font-family:inherit}
+textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
+textarea::placeholder{color:var(--text-muted)}
+.controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.switch-group{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)}
+.switch-group input[type="checkbox"]{appearance:none;width:40px;height:22px;background:var(--border-color);border-radius:11px;position:relative;cursor:pointer;transition:background 0.3s}
+.switch-group input[type="checkbox"]::after{content:'';position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform 0.3s}
+.switch-group input[type="checkbox"]:checked{background:var(--accent)}
+.switch-group input[type="checkbox"]:checked::after{transform:translateX(18px)}
+.btn{padding:10px 24px;border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:8px;font-family:inherit}
+.btn-primary{background:linear-gradient(135deg,var(--accent),#4d7cff);color:#fff;box-shadow:0 4px 16px var(--accent-glow)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 24px var(--accent-glow)}
+.btn-primary:active{transform:translateY(0)}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+.btn-success{background:var(--success);color:#fff}
+.btn-success:hover{background:#00c080}
+.btn-success:disabled{opacity:0.5;cursor:not-allowed}
+.btn-outline{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.btn-outline:hover{background:rgba(26,107,255,0.1)}
+.btn-outline:disabled{opacity:0.5;cursor:not-allowed}
+.loading-overlay{display:none;position:relative;padding:40px;text-align:center}
+.loading-overlay.show{display:block}
+.spinner{width:48px;height:48px;border:3px solid var(--border-color);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{color:var(--text-secondary);font-size:14px}
+.loading-steps{margin-top:16px;text-align:left;max-width:400px;margin-left:auto;margin-right:auto}
+.loading-step{display:flex;align-items:center;gap:10px;padding:8px 0;font-size:13px;color:var(--text-muted)}
+.loading-step .step-icon{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px}
+.loading-step .step-icon.pending{border:2px solid var(--border-color)}
+.loading-step .step-icon.active{border:2px solid var(--accent);color:var(--accent);animation:pulse 1s infinite}
+.loading-step .step-icon.done{background:var(--success);color:#fff;border:none}
+.result-panel{display:none}
+.result-panel.show{display:block}
+.result-header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border-color)}
+.result-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500}
+.result-badge.success{background:var(--success-bg);color:var(--success)}
+.result-badge.warning{background:var(--warning-bg);color:var(--warning)}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
+.result-card{background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:16px}
+.result-card .rc-label{font-size:12px;color:var(--text-muted);margin-bottom:6px}
+.result-card .rc-value{font-size:16px;font-weight:600;color:var(--text-primary)}
+.result-card .rc-value.accent{color:var(--accent)}
+.result-card .rc-value.success{color:var(--success)}
+.confidence-bar{height:6px;background:var(--border-color);border-radius:3px;margin-top:8px;overflow:hidden}
+.confidence-fill{height:100%;border-radius:3px;transition:width 1s ease;background:linear-gradient(90deg,var(--accent),var(--success))}
+.file-info{background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:16px;margin-bottom:16px}
+.file-icon{width:48px;height:48px;border-radius:var(--radius);background:rgba(26,107,255,0.15);display:flex;align-items:center;justify-content:center;font-size:20px;color:var(--accent)}
+.file-meta{flex:1}
+.file-meta .file-name{font-size:14px;font-weight:500;color:var(--text-primary);margin-bottom:4px}
+.file-meta .file-path{font-size:12px;color:var(--text-muted);font-family:monospace}
+.file-actions{display:flex;gap:8px}
+.import-result{margin-top:16px;padding:16px;border-radius:var(--radius);display:none}
+.import-result.show{display:block}
+.import-result.success{background:var(--success-bg);border:1px solid rgba(0,214,143,0.3)}
+.import-result.error{background:var(--danger-bg);border:1px solid rgba(255,61,113,0.3)}
+.import-result .ir-title{font-size:14px;font-weight:600;margin-bottom:8px}
+.import-result.success .ir-title{color:var(--success)}
+.import-result.error .ir-title{color:var(--danger)}
+.import-result p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+.clean-rules{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.rule-checkbox{display:flex;align-items:center;gap:6px;padding:8px 14px;background:var(--bg-input);border:1px solid var(--border-color);border-radius:var(--radius);cursor:pointer;transition:all 0.2s;font-size:13px;color:var(--text-secondary)}
+.rule-checkbox:hover{border-color:var(--border-hover)}
+.rule-checkbox input[type="checkbox"]{accent-color:var(--accent);width:16px;height:16px;cursor:pointer}
+.rule-checkbox.checked{border-color:var(--accent);background:rgba(26,107,255,0.08);color:var(--text-primary)}
+.clean-report{display:none}
+.clean-report.show{display:block}
+.report-table{width:100%;border-collapse:collapse;margin-top:12px}
+.report-table th,.report-table td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--border-color);font-size:13px}
+.report-table th{color:var(--text-muted);font-weight:500;background:var(--bg-input)}
+.report-table td{color:var(--text-secondary)}
+.report-table tr:hover td{background:rgba(26,107,255,0.03)}
+.report-summary{display:flex;gap:16px;margin-top:16px;flex-wrap:wrap}
+.report-stat{padding:12px 20px;background:var(--bg-input);border-radius:var(--radius);border:1px solid var(--border-color)}
+.report-stat .stat-value{font-size:20px;font-weight:700;color:var(--accent)}
+.report-stat .stat-label{font-size:12px;color:var(--text-muted);margin-top:4px}
+.toast{position:fixed;top:80px;right:24px;padding:14px 24px;border-radius:var(--radius);font-size:14px;z-index:1000;transform:translateX(120%);transition:transform 0.3s ease;box-shadow:var(--shadow)}
+.toast.show{transform:translateX(0)}
+.toast.success{background:var(--success);color:#fff}
+.toast.error{background:var(--danger);color:#fff}
+.toast.info{background:var(--accent);color:#fff}
+@media(max-width:900px){.container{flex-direction:column;height:auto}.sidebar{width:100%;min-width:auto;max-height:300px}.main{padding:16px}}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="header-left">
+<div class="logo">AI</div>
+<h1>AI智能建模引擎</h1>
+</div>
+<div class="header-status">
+<div class="status-dot"></div>
+<span>服务运行中</span>
+</div>
+</div>
+<div class="container">
+<div class="sidebar">
+<div class="sidebar-header">
+<h2>模型模板库</h2>
+<p>共 <span id="templateCount">0</span> 个模板可用</p>
+</div>
+<div class="template-list" id="templateList"></div>
+<div class="template-detail" id="templateDetail">
+<h3 id="detailName"></h3>
+<p id="detailDesc"></p>
+<div class="detail-label">适用场景</div>
+<p id="detailScene"></p>
+<div class="detail-label">输出格式</div>
+<p id="detailFormat"></p>
+</div>
+</div>
+<div class="main">
+<div class="section">
+<div class="section-title">
+<span class="icon blue">&#9998;</span>
+智能建模
+</div>
+<div class="input-group">
+<label>需求描述</label>
+<textarea id="requirementInput" placeholder="请输入建模需求描述，例如：分析账户试卡行为，找出小额试探后大额进账的账户"></textarea>
+</div>
+<div class="controls">
+<div class="switch-group">
+<input type="checkbox" id="autoImport">
+<span>自动导入到平台</span>
+</div>
+<button class="btn btn-primary" id="generateBtn" onclick="generateModel()">&#9889; 生成模型</button>
+</div>
+<div class="loading-overlay" id="loadingOverlay">
+<div class="spinner"></div>
+<div class="loading-text" id="loadingText">正在分析需求...</div>
+<div class="loading-steps">
+<div class="loading-step"><span class="step-icon active" id="step1">&#9679;</span><span id="step1Text">解析需求描述</span></div>
+<div class="loading-step"><span class="step-icon pending" id="step2">&#9679;</span><span id="step2Text">匹配模型模板</span></div>
+<div class="loading-step"><span class="step-icon pending" id="step3">&#9679;</span><span id="step3Text">生成模型文件</span></div>
+<div class="loading-step"><span class="step-icon pending" id="step4">&#9679;</span><span id="step4Text">校验模型结构</span></div>
+</div>
+</div>
+<div class="result-panel" id="resultPanel">
+<div class="result-header">
+<span class="result-badge success">&#10003; 生成成功</span>
+</div>
+<div class="result-grid">
+<div class="result-card">
+<div class="rc-label">模型类型</div>
+<div class="rc-value accent" id="resultType">-</div>
+</div>
+<div class="result-card">
+<div class="rc-label">置信度</div>
+<div class="rc-value success" id="resultConfidence">-</div>
+<div class="confidence-bar"><div class="confidence-fill" id="confidenceFill" style="width:0%"></div></div>
+</div>
+<div class="result-card">
+<div class="rc-label">匹配模板</div>
+<div class="rc-value" id="resultTemplate">-</div>
+</div>
+<div class="result-card">
+<div class="rc-label">生成耗时</div>
+<div class="rc-value" id="resultTime">-</div>
+</div>
+</div>
+<div class="file-info">
+<div class="file-icon">&#128196;</div>
+<div class="file-meta">
+<div class="file-name" id="resultFileName">-</div>
+<div class="file-path" id="resultFilePath">-</div>
+</div>
+<div class="file-actions">
+<button class="btn btn-outline" onclick="downloadFile()">&#11015; 下载</button>
+<button class="btn btn-success" id="importBtn" onclick="importModel()">&#128230; 导入</button>
+</div>
+</div>
+<div class="import-result" id="importResult">
+<div class="ir-title" id="importTitle"></div>
+<p id="importMessage"></p>
+</div>
+</div>
+</div>
+<div class="section">
+<div class="section-title">
+<span class="icon green">&#9881;</span>
+数据清洗
+</div>
+<div class="input-group">
+<label>JSON数据输入</label>
+<textarea id="cleanInput" placeholder='请输入JSON格式数据，例如：[{"id_card":"110101199001011234","phone":"13800138000","amount":"1,000.50"}]' style="min-height:100px"></textarea>
+</div>
+<div class="input-group">
+<label>清洗规则</label>
+<div class="clean-rules" id="cleanRules">
+<label class="rule-checkbox"><input type="checkbox" value="id_card" onchange="toggleRule(this)"> 身份证校验</label>
+<label class="rule-checkbox"><input type="checkbox" value="phone" onchange="toggleRule(this)"> 手机号提取</label>
+<label class="rule-checkbox"><input type="checkbox" value="amount" onchange="toggleRule(this)"> 金额标准化</label>
+<label class="rule-checkbox"><input type="checkbox" value="dedup" onchange="toggleRule(this)"> 去重</label>
+<label class="rule-checkbox"><input type="checkbox" value="time" onchange="toggleRule(this)"> 时间标准化</label>
+</div>
+</div>
+<button class="btn btn-primary" id="cleanBtn" onclick="cleanData()">&#128295; 开始清洗</button>
+<div class="clean-report" id="cleanReport">
+<div class="result-header">
+<span class="result-badge success">&#10003; 清洗完成</span>
+</div>
+<table class="report-table">
+<thead><tr><th>规则</th><th>处理前</th><th>处理后</th><th>变更数</th></tr></thead>
+<tbody id="reportBody"></tbody>
+</table>
+<div class="report-summary" id="reportSummary"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+var currentFileUrl='';
+var currentFileName='';
+
+function showToast(msg,type){
+var t=document.getElementById('toast');
+t.textContent=msg;
+t.className='toast '+type+' show';
+setTimeout(function(){t.classList.remove('show')},3000);
+}
+
+function loadTemplates(){
+fetch('/api/templates').then(function(r){return r.json()}).then(function(data){
+var list=document.getElementById('templateList');
+document.getElementById('templateCount').textContent=data.templates.length;
+data.templates.forEach(function(tpl){
+var item=document.createElement('div');
+item.className='template-item';
+item.innerHTML='<div class="t-name">'+tpl.name+'</div><div class="t-desc">'+tpl.description+'</div><span class="t-tag">'+tpl.category+'</span>';
+item.onclick=function(){
+document.querySelectorAll('.template-item').forEach(function(el){el.classList.remove('active')});
+item.classList.add('active');
+showTemplateDetail(tpl);
+};
+list.appendChild(item);
+});
+}).catch(function(err){showToast('加载模板失败','error')});
+}
+
+function showTemplateDetail(tpl){
+var d=document.getElementById('templateDetail');
+document.getElementById('detailName').textContent=tpl.name;
+document.getElementById('detailDesc').textContent=tpl.description;
+document.getElementById('detailScene').textContent=tpl.scene||'通用建模场景';
+document.getElementById('detailFormat').textContent=tpl.output_format||'.cube 模型文件';
+d.classList.add('show');
+}
+
+function resetSteps(){
+for(var i=1;i<=4;i++){
+var s=document.getElementById('step'+i);
+s.className='step-icon '+(i===1?'active':'pending');
+}
+}
+
+function advanceStep(n){
+for(var i=1;i<=4;i++){
+var s=document.getElementById('step'+i);
+if(i<n)s.className='step-icon done';
+else if(i===n)s.className='step-icon active';
+else s.className='step-icon pending';
+}
+var texts=['解析需求描述','匹配模型模板','生成模型文件','校验模型结构'];
+document.getElementById('loadingText').textContent=texts[n-1]+'...';
+}
+
+function generateModel(){
+var req=document.getElementById('requirementInput').value.trim();
+if(!req){showToast('请输入建模需求描述','error');return;}
+var autoImport=document.getElementById('autoImport').checked;
+var btn=document.getElementById('generateBtn');
+btn.disabled=true;
+document.getElementById('resultPanel').classList.remove('show');
+document.getElementById('importResult').classList.remove('show');
+document.getElementById('loadingOverlay').classList.add('show');
+resetSteps();
+var stepInterval=setInterval(function(){
+var active=document.querySelector('.step-icon.active');
+if(active){
+var id=active.id.replace('step','');
+var next=parseInt(id)+1;
+if(next<=4)advanceStep(next);
+}
+},800);
+fetch('/api/generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requirement:req,auto_import:autoImport})}).then(function(r){return r.json()}).then(function(data){
+clearInterval(stepInterval);
+for(var i=1;i<=4;i++){document.getElementById('step'+i).className='step-icon done';}
+setTimeout(function(){
+document.getElementById('loadingOverlay').classList.remove('show');
+btn.disabled=false;
+if(data.status==='success'){
+showResult(data);
+if(autoImport&&data.import_result){
+showImportResult(data.import_result);
+}
+showToast('模型生成成功','success');
+}else{
+showToast(data.message||'生成失败','error');
+}
+},500);
+}).catch(function(err){
+clearInterval(stepInterval);
+document.getElementById('loadingOverlay').classList.remove('show');
+btn.disabled=false;
+showToast('请求失败，请检查服务状态','error');
+});
+}
+
+function showResult(data){
+document.getElementById('resultType').textContent=data.model_type||'-';
+var conf=data.confidence||0;
+document.getElementById('resultConfidence').textContent=(conf*100).toFixed(1)+'%';
+setTimeout(function(){document.getElementById('confidenceFill').style.width=(conf*100)+'%';},100);
+document.getElementById('resultTemplate').textContent=data.template_name||'-';
+document.getElementById('resultTime').textContent=data.elapsed?data.elapsed.toFixed(2)+'s':'-';
+document.getElementById('resultFileName').textContent=data.file_name||'-';
+document.getElementById('resultFilePath').textContent=data.file_path||'-';
+currentFileUrl=data.file_url||'';
+currentFileName=data.file_name||'';
+document.getElementById('resultPanel').classList.add('show');
+}
+
+function downloadFile(){
+if(!currentFileUrl){showToast('无可下载文件','error');return;}
+var a=document.createElement('a');
+a.href=currentFileUrl;
+a.download=currentFileName||'model.cube';
+a.click();
+}
+
+function importModel(){
+var btn=document.getElementById('importBtn');
+btn.disabled=true;
+btn.textContent='导入中...';
+fetch('/api/import',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({file_path:document.getElementById('resultFilePath').textContent})}).then(function(r){return r.json()}).then(function(data){
+btn.disabled=false;
+btn.textContent='📥 导入';
+showImportResult(data);
+}).catch(function(err){
+btn.disabled=false;
+btn.textContent='📥 导入';
+showToast('导入请求失败','error');
+});
+}
+
+function showImportResult(data){
+var el=document.getElementById('importResult');
+var title=document.getElementById('importTitle');
+var msg=document.getElementById('importMessage');
+if(data.status==='success'){
+el.className='import-result show success';
+title.textContent='导入成功';
+msg.textContent=data.message||'模型已成功导入到平台';
+}else{
+el.className='import-result show error';
+title.textContent='导入失败';
+msg.textContent=data.message||'导入过程中发生错误';
+}
+}
+
+function toggleRule(cb){
+var label=cb.parentElement;
+if(cb.checked)label.classList.add('checked');
+else label.classList.remove('checked');
+}
+
+function cleanData(){
+var input=document.getElementById('cleanInput').value.trim();
+if(!input){showToast('请输入JSON数据','error');return;}
+var rules=[];
+document.querySelectorAll('#cleanRules input[type="checkbox"]:checked').forEach(function(cb){rules.push(cb.value);});
+if(rules.length===0){showToast('请至少选择一条清洗规则','error');return;}
+var btn=document.getElementById('cleanBtn');
+btn.disabled=true;
+fetch('/api/clean',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({data:input,rules:rules})}).then(function(r){return r.json()}).then(function(data){
+btn.disabled=false;
+if(data.status==='success'){
+showCleanReport(data);
+showToast('数据清洗完成','success');
+}else{
+showToast(data.message||'清洗失败','error');
+}
+}).catch(function(err){
+btn.disabled=false;
+showToast('清洗请求失败','error');
+});
+}
+
+function showCleanReport(data){
+var body=document.getElementById('reportBody');
+body.innerHTML='';
+var report=data.report||[];
+var ruleNames={'id_card':'身份证校验','phone':'手机号提取','amount':'金额标准化','dedup':'去重','time':'时间标准化'};
+report.forEach(function(r){
+var tr=document.createElement('tr');
+tr.innerHTML='<td>'+ruleNames[r.rule]+'</td><td>'+r.before+'</td><td>'+r.after+'</td><td>'+r.changes+'</td>';
+body.appendChild(tr);
+});
+var summary=document.getElementById('reportSummary');
+summary.innerHTML='';
+var stats=data.summary||{};
+var statItems=[
+{value:stats.total||0,label:'总记录数'},
+{value:stats.cleaned||0,label:'清洗记录数'},
+{value:stats.invalid||0,label:'无效记录数'},
+{value:((stats.quality||0)*100).toFixed(1)+'%',label:'数据质量'}
+];
+statItems.forEach(function(s){
+var div=document.createElement('div');
+div.className='report-stat';
+div.innerHTML='<div class="stat-value">'+s.value+'</div><div class="stat-label">'+s.label+'</div>';
+summary.appendChild(div);
+});
+document.getElementById('cleanReport').classList.add('show');
+}
+
+loadTemplates();
+</script>
+</body>
+</html>

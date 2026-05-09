@@ -1,0 +1,52 @@
+{
+    "tt.jz_bank_bill": {
+        "name": "银行交易流水表",
+        "description": "存储银行交易流水明细数据",
+        "fields": [
+            {"name": "ajbh", "label": "案件编号", "type": "string"},
+            {"name": "jy_mc", "label": "交易人名称", "type": "string"},
+            {"name": "jy_sfzh", "label": "交易人身份证号", "type": "string"},
+            {"name": "jy_zkh", "label": "交易人账号", "type": "string"},
+            {"name": "jy_je", "label": "交易金额", "type": "decimal"},
+            {"name": "jdbz", "label": "借贷标志", "type": "string"},
+            {"name": "sj", "label": "时间", "type": "datetime"},
+            {"name": "zysm", "label": "摘要说明", "type": "string"},
+            {"name": "jy_gsd", "label": "交易归属地", "type": "string"},
+            {"name": "fk_mc", "label": "付款人名称", "type": "string"},
+            {"name": "fk_zh", "label": "付款账号", "type": "string"},
+            {"name": "ds_mc", "label": "收款人名称", "type": "string"},
+            {"name": "ds_zkh", "label": "收款账号", "type": "string"},
+            {"name": "jy_zhlx", "label": "账户类型", "type": "string"},
+            {"name": "jylx", "label": "交易类型", "type": "string"},
+            {"name": "mac", "label": "MAC", "type": "string"},
+            {"name": "ip", "label": "IP", "type": "string"},
+            {"name": "jy_khh", "label": "开户行", "type": "string"},
+            {"name": "cube_imp_ort_source_path", "label": "数据来源", "type": "string"}
+        ]
+    },
+    "tt.jz_bank_zh": {
+        "name": "银行账户表",
+        "description": "存储银行账户基本信息",
+        "fields": [
+            {"name": "zh", "label": "账号", "type": "string"},
+            {"name": "mc", "label": "名称", "type": "string"},
+            {"name": "sfzh", "label": "身份证号", "type": "string"},
+            {"name": "khh", "label": "开户行", "type": "string"},
+            {"name": "zhlx", "label": "账户类型", "type": "string"},
+            {"name": "ye", "label": "余额", "type": "decimal"},
+            {"name": "kh", "label": "卡号", "type": "string"},
+            {"name": "gsd", "label": "归属地", "type": "string"},
+            {"name": "cjrq", "label": "创建日期", "type": "datetime"}
+        ]
+    },
+    "tt.jz_bank_zhxx": {
+        "name": "账户信息类型表",
+        "description": "存储账户扩展信息及类型",
+        "fields": [
+            {"name": "zh", "label": "账号", "type": "string"},
+            {"name": "xxlx", "label": "信息类型", "type": "string"},
+            {"name": "xxnr", "label": "信息内容", "type": "string"},
+            {"name": "gxsj", "label": "更新时间", "type": "datetime"}
+        ]
+    }
+}

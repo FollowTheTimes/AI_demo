@@ -1,0 +1,128 @@
+import json
+import os
+import logging
+from config import KNOWLEDGE_DIR
+
+logger = logging.getLogger(__name__)
+
+
+class RAGRetriever:
+
+    def __init__(self):
+        self.templates = []
+        self.index = {}
+        self.template_dir = os.path.join(KNOWLEDGE_DIR, "templates")
+
+    def load_templates(self) -> list:
+        self.templates = []
+        if not os.path.exists(self.template_dir):
+            logger.warning(f"模板目录不存在: {self.template_dir}")
+            return self.templates
+
+        for filename in os.listdir(self.template_dir):
+            if not filename.endswith(".cube"):
+                continue
+            filepath = os.path.join(self.template_dir, filename)
+            try:
+                with open(filepath, "r", encoding="utf-8") as f:
+                    cube_data = json.load(f)
+
+                script_raw = cube_data.get("script", "{}")
+                if isinstance(script_raw, str):
+                    cube_data["script"] = json.loads(script_raw)
+
+                self.templates.append(cube_data)
+            except (json.JSONDecodeError, Exception) as e:
+                logger.warning(f"加载模板失败 {filename}: {e}")
+
+        return self.templates
+
+    def build_index(self) -> dict:
+        self.index = {}
+        for template in self.templates:
+            title = template.get("title", "")
+            name = template.get("name", "")
+            bz = template.get("bz", "") or ""
+
+            index_text = f"{title} {name} {bz}".lower()
+            tokens = set(self._tokenize(index_text))
+
+            script = template.get("script", {})
+            if isinstance(script, dict):
+                tables = script.get("tables", {})
+                for table_info in tables.values():
+                    table_name = table_info.get("name", "")
+                    table_title = table_info.get("title", "")
+                    tokens.update(self._tokenize(f"{table_name} {table_title}".lower()))
+
+            self.index[title] = {
+                "template": template,
+                "tokens": tokens,
+            }
+
+        return self.index
+
+    def search(self, intent: dict, top_k: int = 3) -> list:
+        model_type = intent.get("model_type", "")
+        keywords = intent.get("keywords", [])
+
+        exact_matches = []
+        for title, entry in self.index.items():
+            if model_type and model_type in title:
+                exact_matches.append({
+                    "template": entry["template"],
+                    "score": 1.0,
+                    "match_type": "精确匹配",
+                })
+
+        keyword_results = []
+        query_tokens = set(self._tokenize(f"{model_type} {' '.join(keywords)}".lower()))
+
+        for title, entry in self.index.items():
+            if any(m["template"].get("title") == title for m in exact_matches):
+                continue
+
+            similarity = self._calculate_similarity(query_tokens, entry["tokens"])
+            if similarity > 0:
+                keyword_results.append({
+                    "template": entry["template"],
+                    "score": similarity,
+                    "match_type": "关键词匹配",
+                })
+
+        keyword_results.sort(key=lambda x: x["score"], reverse=True)
+
+        results = exact_matches + keyword_results
+        return results[:top_k]
+
+    def get_template(self, name: str) -> dict:
+        for template in self.templates:
+            if template.get("name") == name or template.get("title") == name:
+                return template
+        return None
+
+    def _calculate_similarity(self, set_a: set, set_b: set) -> float:
+        if not set_a or not set_b:
+            return 0.0
+        intersection = set_a & set_b
+        union = set_a | set_b
+        return len(intersection) / len(union)
+
+    def _tokenize(self, text: str) -> list:
+        tokens = []
+        current = ""
+        for ch in text:
+            if "\u4e00" <= ch <= "\u9fff":
+                if current:
+                    tokens.append(current.lower())
+                    current = ""
+                tokens.append(ch)
+            elif ch.isalnum():
+                current += ch
+            else:
+                if current:
+                    tokens.append(current.lower())
+                    current = ""
+        if current:
+            tokens.append(current.lower())
+        return tokens
