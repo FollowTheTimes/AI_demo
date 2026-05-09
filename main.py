@@ -12,6 +12,7 @@ from engines.rag_retriever import RAGRetriever
 from engines.cube_builder import CubeBuilder
 from engines.cube_generator import CubeGenerator
 from engines.cube_validator import CubeValidator
+from engines.condition_editor import ConditionEditor
 from engines.data_cleaner import DataCleaner
 from engines.schema_registry import SchemaRegistry
 from engines.llm_gateway import LLMGateway
@@ -48,6 +49,7 @@ llm_gateway = LLMGateway({
     "max_tokens": config.LLM_MAX_TOKENS,
 })
 cube_validator = CubeValidator(schema_registry)
+condition_editor = ConditionEditor()
 cube_generator = CubeGenerator(
     llm_gateway=llm_gateway,
     schema_registry=schema_registry,
@@ -73,6 +75,11 @@ class CleanRequest(BaseModel):
 
 class ImportRequest(BaseModel):
     file_path: str
+
+
+class ConditionUpdateRequest(BaseModel):
+    cube_content: dict
+    conditions: list
 
 
 @app.post("/api/generate")
@@ -144,6 +151,21 @@ async def health():
         "schemas_loaded": schema_registry.table_count,
         "llm_available": llm_available,
     }
+
+
+@app.patch("/api/conditions")
+async def update_conditions(req: ConditionUpdateRequest):
+    updated = condition_editor.update_conditions(req.cube_content, req.conditions)
+    errors = updated.pop("errors", [])
+    if errors:
+        return {"success": False, "errors": errors, "cube_content": updated}
+    return {"success": True, "cube_content": updated}
+
+
+@app.post("/api/parse-conditions")
+async def parse_conditions(cube_content: dict):
+    conditions = condition_editor.parse_conditions(cube_content)
+    return {"conditions": conditions}
 
 
 if __name__ == "__main__":
