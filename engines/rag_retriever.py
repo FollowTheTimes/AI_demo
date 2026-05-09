@@ -1,5 +1,6 @@
 import json
 import os
+import copy
 import logging
 from config import KNOWLEDGE_DIR
 
@@ -93,7 +94,55 @@ class RAGRetriever:
         keyword_results.sort(key=lambda x: x["score"], reverse=True)
 
         results = exact_matches + keyword_results
-        return results[:top_k]
+        results = results[:top_k]
+        for result in results:
+            result["summary"] = self.get_template_summary(result["template"])
+        return results
+
+    def get_template_summary(self, template: dict) -> dict:
+        summary = {
+            "title": template.get("title", ""),
+            "name": template.get("name", ""),
+            "bz": template.get("bz", ""),
+        }
+        script = template.get("script", {})
+        if isinstance(script, str):
+            try:
+                script = json.loads(script)
+            except (json.JSONDecodeError, TypeError):
+                script = {}
+
+        if isinstance(script, dict):
+            script_summary = {"tables": {}, "cloneRel": script.get("cloneRel", {})}
+            for table_id, table in script.get("tables", {}).items():
+                table_copy = copy.deepcopy(table)
+                if "data" in table_copy:
+                    del table_copy["data"]
+                script_summary["tables"][table_id] = table_copy
+            summary["script"] = script_summary
+
+        return summary
+
+    def get_few_shot_examples(self, intent: dict, max_examples: int = 3) -> list:
+        search_results = self.search(intent, top_k=max_examples)
+        examples = []
+        for result in search_results:
+            template = result["template"]
+            example = copy.deepcopy(template)
+            script = example.get("script", {})
+            if isinstance(script, str):
+                try:
+                    script = json.loads(script)
+                    example["script"] = script
+                except (json.JSONDecodeError, TypeError):
+                    script = {}
+
+            if isinstance(script, dict):
+                for table_id, table in script.get("tables", {}).items():
+                    if "data" in table:
+                        del table["data"]
+            examples.append(example)
+        return examples
 
     def get_template(self, name: str) -> dict:
         for template in self.templates:
