@@ -12,7 +12,9 @@ from engines.rag_retriever import RAGRetriever
 from engines.cube_builder import CubeBuilder
 from engines.data_cleaner import DataCleaner
 from engines.schema_registry import SchemaRegistry
+from engines.llm_gateway import LLMGateway
 from integrations.datacube_importer import DataCubeImporter
+import config
 
 setup_logging()
 
@@ -36,6 +38,13 @@ cube_builder = CubeBuilder()
 data_cleaner = DataCleaner()
 schema_registry = SchemaRegistry()
 importer = DataCubeImporter()
+llm_gateway = LLMGateway({
+    "api_type": config.LLM_API_TYPE,
+    "api_url": config.LLM_API_URL,
+    "model_name": config.LLM_MODEL_NAME,
+    "timeout": config.LLM_TIMEOUT,
+    "max_tokens": config.LLM_MAX_TOKENS,
+})
 
 rag_retriever.load_templates()
 rag_retriever.build_index()
@@ -144,10 +153,12 @@ async def get_schemas():
 
 @app.get("/api/health")
 async def health():
+    llm_available = await llm_gateway.check_available()
     return {
         "status": "ok",
         "templates_loaded": len(rag_retriever.templates),
         "schemas_loaded": schema_registry.table_count,
+        "llm_available": llm_available,
     }
 
 

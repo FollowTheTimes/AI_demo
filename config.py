@@ -17,6 +17,16 @@ OLLAMA_BASE_URL = "http://localhost:11434"
 
 OLLAMA_MODEL = "qwen2.5:7b"
 
+LLM_API_TYPE = os.environ.get("LLM_API_TYPE", "ollama")
+
+LLM_API_URL = os.environ.get("LLM_API_URL", OLLAMA_BASE_URL)
+
+LLM_MODEL_NAME = os.environ.get("LLM_MODEL_NAME", OLLAMA_MODEL)
+
+LLM_TIMEOUT = int(os.environ.get("LLM_TIMEOUT", "30"))
+
+LLM_MAX_TOKENS = int(os.environ.get("LLM_MAX_TOKENS", "4096"))
+
 MODELING_TYPE_MAP = {
     "试卡行为分析": ["试卡", "小额测试", "试探", "小额试探", "小额试卡"],
     "沉寂卡分析": ["沉寂", "休眠", "长期不动", "沉寂卡", "休眠卡"],
