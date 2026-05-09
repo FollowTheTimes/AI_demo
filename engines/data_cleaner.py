@@ -18,9 +18,14 @@ class DataCleaner:
         "支出": "出",
     }
 
-    def clean(self, data):
+    ALL_RULES = ["id_card", "phone", "amount", "deduplicate", "datetime", "jdbz", "empty"]
+
+    def clean(self, data, rules=None):
         if not data:
             return []
+
+        if rules is None or len(rules) == 0:
+            rules = self.ALL_RULES
 
         cleaned = []
         anomaly_count = 0
@@ -29,39 +34,41 @@ class DataCleaner:
             record = dict(row)
             has_anomaly = False
 
-            if "sfzh" in record and record["sfzh"]:
+            if "id_card" in rules and "sfzh" in record and record["sfzh"]:
                 is_valid, normalized = self.validate_id_card(record["sfzh"])
                 record["sfzh"] = normalized
                 if not is_valid:
                     record["_id_card_anomaly"] = True
                     has_anomaly = True
 
-            if "zysm" in record and record["zysm"]:
+            if "phone" in rules and "zysm" in record and record["zysm"]:
                 phones = self.extract_phones(record["zysm"])
                 if phones:
                     record["_extracted_phones"] = phones
 
-            if "jy_je" in record:
+            if "amount" in rules and "jy_je" in record:
                 record["jy_je"] = self.normalize_amount(record["jy_je"])
 
-            if "sj" in record and record["sj"]:
+            if "datetime" in rules and "sj" in record and record["sj"]:
                 record["sj"] = self.normalize_datetime(record["sj"])
 
-            if "jdbz" in record and record["jdbz"]:
+            if "jdbz" in rules and "jdbz" in record and record["jdbz"]:
                 jdbz = str(record["jdbz"]).strip()
                 if jdbz not in ("进", "出"):
                     record["jdbz"] = self.JDBZ_MAP.get(jdbz, jdbz)
 
-            for key in list(record.keys()):
-                if isinstance(record[key], str) and record[key].strip() == "":
-                    record[key] = None
+            if "empty" in rules:
+                for key in list(record.keys()):
+                    if isinstance(record[key], str) and record[key].strip() == "":
+                        record[key] = None
 
             if has_anomaly:
                 anomaly_count += 1
 
             cleaned.append(record)
 
-        cleaned = self.remove_duplicates(cleaned)
+        if "deduplicate" in rules:
+            cleaned = self.remove_duplicates(cleaned)
 
         return cleaned
 
