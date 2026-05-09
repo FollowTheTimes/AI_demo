@@ -10,6 +10,8 @@ from config import setup_logging
 from engines.intent_parser import IntentParser
 from engines.rag_retriever import RAGRetriever
 from engines.cube_builder import CubeBuilder
+from engines.cube_generator import CubeGenerator
+from engines.cube_validator import CubeValidator
 from engines.data_cleaner import DataCleaner
 from engines.schema_registry import SchemaRegistry
 from engines.llm_gateway import LLMGateway
@@ -45,6 +47,14 @@ llm_gateway = LLMGateway({
     "timeout": config.LLM_TIMEOUT,
     "max_tokens": config.LLM_MAX_TOKENS,
 })
+cube_validator = CubeValidator(schema_registry)
+cube_generator = CubeGenerator(
+    llm_gateway=llm_gateway,
+    schema_registry=schema_registry,
+    rag_retriever=rag_retriever,
+    intent_parser=intent_parser,
+    validator=cube_validator,
+)
 
 rag_retriever.load_templates()
 rag_retriever.build_index()
@@ -67,39 +77,13 @@ class ImportRequest(BaseModel):
 
 @app.post("/api/generate")
 async def generate(req: GenerateRequest):
-    intent = await intent_parser.parse(req.description)
+    result = await cube_generator.generate(req.description)
 
-    search_results = rag_retriever.search(intent, top_k=1)
-    if not search_results:
-        return {
-            "success": False,
-            "message": "未找到匹配的模板",
-            "model_type": intent.get("model_type", ""),
-        }
+    if req.auto_import and result.get("success") and result.get("file_path"):
+        import_result = await importer.import_from_path(result["file_path"])
+        result["import_result"] = import_result
 
-    best_match = search_results[0]
-    template = best_match["template"]
-
-    cube_content = cube_builder.build(intent, template)
-    file_path = cube_builder.save(cube_content)
-
-    import_result = None
-    if req.auto_import:
-        import_result = await importer.import_cube(
-            cube_content, file_name=os.path.basename(file_path)
-        )
-
-    return {
-        "success": True,
-        "model_type": intent.get("model_type", ""),
-        "confidence": intent.get("confidence", 0),
-        "match_type": best_match.get("match_type", ""),
-        "match_score": best_match.get("score", 0),
-        "file_path": file_path,
-        "file_name": os.path.basename(file_path),
-        "cube_content": cube_content,
-        "import_result": import_result,
-    }
+    return result
 
 
 @app.post("/api/clean")
