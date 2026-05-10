@@ -10,7 +10,6 @@ from pydantic import BaseModel
 from config import setup_logging
 from engines.intent_parser import IntentParser
 from engines.rag_retriever import RAGRetriever
-from engines.cube_builder import CubeBuilder
 from engines.cube_generator import CubeGenerator
 from engines.cube_validator import CubeValidator
 from engines.condition_editor import ConditionEditor
