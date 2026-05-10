@@ -6,6 +6,7 @@ from datetime import datetime
 
 from config import OUTPUT_DIR
 from engines.llm_gateway import LLMConnectionError
+from engines.cube_utils import parse_script
 
 logger = logging.getLogger(__name__)
 
@@ -169,12 +170,7 @@ class CubeGenerator:
             return conditions
 
         script = cube.get("script", {})
-        if isinstance(script, str):
-            try:
-                script = json.loads(script)
-            except (json.JSONDecodeError, TypeError):
-                return conditions
-
+        script = parse_script(script)
         if not isinstance(script, dict):
             return conditions
 

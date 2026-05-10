@@ -3,6 +3,7 @@ import os
 import copy
 import logging
 from config import KNOWLEDGE_DIR
+from engines.cube_utils import parse_script
 
 logger = logging.getLogger(__name__)
 
@@ -106,11 +107,9 @@ class RAGRetriever:
             "bz": template.get("bz", ""),
         }
         script = template.get("script", {})
-        if isinstance(script, str):
-            try:
-                script = json.loads(script)
-            except (json.JSONDecodeError, TypeError):
-                script = {}
+        script = parse_script(script)
+        if script is None:
+            script = {}
 
         if isinstance(script, dict):
             script_summary = {"tables": {}, "cloneRel": script.get("cloneRel", {})}
@@ -130,12 +129,11 @@ class RAGRetriever:
             template = result["template"]
             example = copy.deepcopy(template)
             script = example.get("script", {})
-            if isinstance(script, str):
-                try:
-                    script = json.loads(script)
-                    example["script"] = script
-                except (json.JSONDecodeError, TypeError):
-                    script = {}
+            script = parse_script(script)
+            if script is not None:
+                example["script"] = script
+            else:
+                script = {}
 
             if isinstance(script, dict):
                 for table_id, table in script.get("tables", {}).items():

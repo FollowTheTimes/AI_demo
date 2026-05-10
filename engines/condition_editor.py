@@ -2,6 +2,7 @@ import json
 import copy
 import logging
 from engines.where_sql_builder import build_where_sql
+from engines.cube_utils import parse_script
 
 logger = logging.getLogger(__name__)
 
@@ -22,11 +23,9 @@ class ConditionEditor:
             return conditions
 
         script = cube_content.get("script", {})
-        if isinstance(script, str):
-            try:
-                script = json.loads(script)
-            except (json.JSONDecodeError, TypeError):
-                return conditions
+        script = parse_script(script)
+        if script is None:
+            return conditions
 
         if not isinstance(script, dict):
             return conditions
@@ -64,12 +63,10 @@ class ConditionEditor:
         errors = []
 
         script = cube.get("script", {})
-        if isinstance(script, str):
-            try:
-                script = json.loads(script)
-                cube["script"] = script
-            except (json.JSONDecodeError, TypeError):
-                return {"errors": [{"message": "script不是合法JSON"}]}
+        script = parse_script(script)
+        if script is None:
+            return {"errors": [{"message": "script不是合法JSON"}]}
+        cube["script"] = script
 
         if not isinstance(script, dict):
             return {"errors": [{"message": "script格式错误"}]}

@@ -1,5 +1,6 @@
 import json
 import logging
+from engines.cube_utils import parse_script
 
 logger = logging.getLogger(__name__)
 
@@ -32,12 +33,7 @@ class CubeValidator:
         return {"valid": len(errors) == 0, "errors": errors}
 
     def _parse_script(self, script):
-        if isinstance(script, dict):
-            return script
-        try:
-            return json.loads(script)
-        except (json.JSONDecodeError, TypeError):
-            return None
+        return parse_script(script)
 
     def _validate_script(self, script, errors):
         tables = script.get("tables", {})
