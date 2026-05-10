@@ -42,21 +42,6 @@ MODELING_TYPE_MAP = {
     "资金万能表": ["万能", "综合", "全量", "身份证", "万能表"],
 }
 
-DATA_SOURCE_TABLES = {
-    "tt.jz_bank_bill": {
-        "name": "银行交易流水表",
-        "description": "存储银行交易流水明细数据",
-    },
-    "tt.jz_bank_zh": {
-        "name": "银行账户表",
-        "description": "存储银行账户基本信息",
-    },
-    "tt.jz_bank_zhxx": {
-        "name": "账户信息类型表",
-        "description": "存储账户扩展信息及类型",
-    },
-}
-
 LOG_LEVEL = logging.INFO
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
