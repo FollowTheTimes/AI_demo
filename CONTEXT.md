@@ -29,6 +29,9 @@
 ### 校验 (Validation)
 对LLM生成的 `.cube` 文件进行JSON格式、必填字段、数据源表名合法性检查。不合法则自动重试生成。校验器内部使用 parse_script 统一处理 script 字段的 str/dict 双态。
 
+### normalize_tables（tables格式规范化）
+LLM输出的 `.cube` 文件中，script.tables 可能是字典（key 为 tableId）或数组（列表形式）。normalize_tables 将其统一转为字典格式，消除 CubeValidator、ConditionEditor、CubeGenerator 中的格式兼容代码。
+
 ## 架构概念
 
 ### LLMGateway（统一LLM调用层）
@@ -62,15 +65,15 @@ ai_engine/
 │   ├── rag_retriever.py       # RAGRetriever - 模板检索
 │   ├── schema_registry.py     # SchemaRegistry - 数据源表注册
 │   ├── data_cleaner.py        # DataCleaner - 数据清洗
-│   └── cube_utils.py          # parse_script 等工具函数
-├── integrations/
+│   └── cube_utils.py          # parse_script、normalize_tables 工具函数
+── integrations/
 │   └── datacube_importer.py   # 平台导入对接器（暂未启用）
 ├── knowledge/
 │   ├── schemas/               # 数据源表schema定义（唯一权威来源）
 │   │   └── bank_tables.json
 │   └── templates/             # 12个.cube模板文件（few-shot示例）
 ├── static/
-│   └── index.html             # 前端界面
+│   ── index.html             # 前端界面
 ├── tests/
 │   ├── test_schema_registry.py
 │   ├── test_cube_validator.py
@@ -80,9 +83,10 @@ ai_engine/
 │   ├── test_condition_editor.py
 │   ├── test_data_cleaner.py
 │   ├── test_integration.py    # 集成回归测试
-│   └── test_api.py            # API端点回归测试
+│   ├── test_api.py            # API端点回归测试
+│   └── test_cube_utils.py     # parse_script、normalize_tables 测试
 └── docs/
-    ├── adr/                   # 架构决策记录
+    ├── adr/                   # 架构决策记录（7个ADR）
     └── issues/                # Issue追踪
 ```
 
@@ -94,7 +98,7 @@ ai_engine/
   ▼
 main.py (create_app)
   ├── LLMGateway ←── IntentParser ←── CubeGenerator
-  │                   └───────────────┘
+  │                   ───────────────┘
   ├── SchemaRegistry ←── CubeValidator ←── CubeGenerator
   │       └──────────────────────────────────┘
   ├── RAGRetriever ←── CubeGenerator

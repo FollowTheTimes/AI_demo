@@ -26,3 +26,4 @@
 - 对内网大模型的能力有一定要求（需支持 JSON 格式输出）
 - 生成延迟可能高于模板填充（需等待LLM推理）
 - LLM调用统一通过 LLMGateway（ADR-0006），IntentParser 和 CubeGenerator 共享同一调用通道
+- few-shot 示例需清洗去除平台专属字段，避免污染 LLM 输出格式（ADR-0007）
