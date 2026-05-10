@@ -25,3 +25,4 @@
 - 微调UI只需实现条件编辑器（字段选择、操作符、值输入）
 - 如果用户需要结构性变更，需重新调用生成接口
 - 生成的模型应尽量准确，减少用户微调需求
+- whereSql 生成逻辑统一由 WhereSqlBuilder 处理（ADR-0006），ConditionEditor 和 CubeGenerator 共享同一实现

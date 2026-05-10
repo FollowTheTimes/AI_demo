@@ -25,3 +25,4 @@
 - 需要校验层确保生成结果格式合法
 - 对内网大模型的能力有一定要求（需支持 JSON 格式输出）
 - 生成延迟可能高于模板填充（需等待LLM推理）
+- LLM调用统一通过 LLMGateway（ADR-0006），IntentParser 和 CubeGenerator 共享同一调用通道
