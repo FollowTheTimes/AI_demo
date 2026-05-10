@@ -1,18 +1,17 @@
 import json
 import re
 import logging
-import httpx
-from config import MODELING_TYPE_MAP, OLLAMA_BASE_URL, OLLAMA_MODEL
+from config import MODELING_TYPE_MAP
+from engines.llm_gateway import LLMConnectionError
 
 logger = logging.getLogger(__name__)
 
 
 class IntentParser:
 
-    def __init__(self):
+    def __init__(self, llm_gateway=None):
         self.type_map = MODELING_TYPE_MAP
-        self.ollama_url = f"{OLLAMA_BASE_URL}/api/generate"
-        self.ollama_model = OLLAMA_MODEL
+        self.llm_gateway = llm_gateway
 
     async def parse(self, user_input: str) -> dict:
         keywords = self._extract_keywords(user_input)
@@ -101,6 +100,9 @@ class IntentParser:
         return None, 0.0
 
     async def _llm_parse(self, user_input: str, keywords: list) -> dict:
+        if not self.llm_gateway:
+            return None
+
         prompt = f"""你是一个意图解析助手。请根据用户的自然语言描述，解析出建模意图。
 
 用户描述：{user_input}
@@ -112,28 +114,18 @@ class IntentParser:
 {{"model_type": "建模类型", "confidence": 0.9, "keywords": ["关键词列表"], "description": "意图描述"}}"""
 
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
-                response = await client.post(
-                    self.ollama_url,
-                    json={
-                        "model": self.ollama_model,
-                        "prompt": prompt,
-                        "stream": False,
-                        "format": "json",
-                    },
-                )
-                response.raise_for_status()
-                result = response.json()
-                content = result.get("response", "")
+            content = await self.llm_gateway.generate(prompt, format_json=True)
 
-                json_match = re.search(r"\{[^{}]+\}", content, re.DOTALL)
-                if json_match:
-                    parsed = json.loads(json_match.group())
-                    if "model_type" in parsed:
-                        parsed["confidence"] = float(parsed.get("confidence", 0.7))
-                        return parsed
+            json_match = re.search(r"\{[^{}]+\}", content, re.DOTALL)
+            if json_match:
+                parsed = json.loads(json_match.group())
+                if "model_type" in parsed:
+                    parsed["confidence"] = float(parsed.get("confidence", 0.7))
+                    return parsed
 
-        except (httpx.HTTPError, json.JSONDecodeError, Exception) as e:
+        except LLMConnectionError as e:
             logger.warning(f"LLM解析失败: {e}")
+        except (json.JSONDecodeError, Exception) as e:
+            logger.warning(f"LLM解析结果解析失败: {e}")
 
         return None

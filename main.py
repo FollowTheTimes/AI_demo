@@ -36,12 +36,6 @@ static_dir = Path(__file__).parent / "static"
 static_dir.mkdir(exist_ok=True)
 app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
-intent_parser = IntentParser()
-rag_retriever = RAGRetriever()
-cube_builder = CubeBuilder()
-data_cleaner = DataCleaner()
-schema_registry = SchemaRegistry()
-importer = DataCubeImporter()
 llm_gateway = LLMGateway({
     "api_type": config.LLM_API_TYPE,
     "api_url": config.LLM_API_URL,
@@ -49,6 +43,11 @@ llm_gateway = LLMGateway({
     "timeout": config.LLM_TIMEOUT,
     "max_tokens": config.LLM_MAX_TOKENS,
 })
+intent_parser = IntentParser(llm_gateway=llm_gateway)
+rag_retriever = RAGRetriever()
+data_cleaner = DataCleaner()
+schema_registry = SchemaRegistry()
+importer = DataCubeImporter()
 cube_validator = CubeValidator(schema_registry)
 condition_editor = ConditionEditor()
 cube_generator = CubeGenerator(
