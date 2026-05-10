@@ -145,6 +145,10 @@ def create_app() -> FastAPI:
             })
         return {"tables": result}
 
+    @app.get("/")
+    async def index():
+        return FileResponse(static_dir / "index.html")
+
     @app.get("/api/health")
     async def health():
         llm_available = await llm_gateway.check_available()
