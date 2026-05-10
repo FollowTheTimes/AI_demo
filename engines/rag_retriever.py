@@ -127,8 +127,14 @@ class RAGRetriever:
         examples = []
         for result in search_results:
             template = result["template"]
-            example = copy.deepcopy(template)
-            script = example.get("script", {})
+            example = {
+                "title": template.get("title", ""),
+                "name": template.get("name", ""),
+                "bz": template.get("bz", ""),
+                "ctype": template.get("ctype", "1"),
+                "version": template.get("version", ""),
+            }
+            script = template.get("script", {})
             script = parse_script(script)
             if script is not None:
                 example["script"] = script
@@ -136,9 +142,44 @@ class RAGRetriever:
                 script = {}
 
             if isinstance(script, dict):
+                clean_tables = {}
                 for table_id, table in script.get("tables", {}).items():
-                    if "data" in table:
-                        del table["data"]
+                    clean_table = {
+                        "tableId": table.get("tableId", table_id),
+                        "name": table.get("name", ""),
+                        "title": table.get("title", ""),
+                    }
+                    if "where" in table:
+                        clean_where = {}
+                        for wk, wc in table["where"].items():
+                            if isinstance(wc, dict):
+                                clean_where[wk] = {
+                                    "field": wc.get("field", ""),
+                                    "title": wc.get("title", ""),
+                                    "type": wc.get("type", "string"),
+                                    "attr": wc.get("attr", {}),
+                                }
+                        clean_table["where"] = clean_where
+                    if "whereSql" in table:
+                        clean_table["whereSql"] = table["whereSql"]
+                    clean_tables[table_id] = clean_table
+                script["tables"] = clean_tables
+
+                clone_rel = script.get("cloneRel", {})
+                if clone_rel:
+                    clean_clone = {}
+                    for key, rel in clone_rel.items():
+                        if isinstance(rel, dict):
+                            clean_clone[key] = {
+                                "sourceId": rel.get("sourceId", rel.get("from", "")),
+                                "targetId": rel.get("targetId", rel.get("to", "")),
+                            }
+                        else:
+                            clean_clone[key] = rel
+                    script["cloneRel"] = clean_clone
+                else:
+                    script["cloneRel"] = {}
+
             examples.append(example)
         return examples
 

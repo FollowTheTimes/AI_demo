@@ -23,7 +23,7 @@ LLM_API_URL = os.environ.get("LLM_API_URL", OLLAMA_BASE_URL)
 
 LLM_MODEL_NAME = os.environ.get("LLM_MODEL_NAME", OLLAMA_MODEL)
 
-LLM_TIMEOUT = int(os.environ.get("LLM_TIMEOUT", "30"))
+LLM_TIMEOUT = int(os.environ.get("LLM_TIMEOUT", "120"))
 
 LLM_MAX_TOKENS = int(os.environ.get("LLM_MAX_TOKENS", "4096"))
 

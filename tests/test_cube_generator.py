@@ -124,11 +124,13 @@ class TestPromptConstruction:
         assert "分析试卡行为" in prompt
 
     @pytest.mark.asyncio
-    async def test_prompt_contains_few_shot_examples(self, generator, mock_llm_gateway):
+    async def test_prompt_contains_format_template(self, generator, mock_llm_gateway):
         await generator.generate("分析试卡行为")
         call_args = mock_llm_gateway.generate.call_args
         prompt = call_args[0][0]
-        assert "试卡行为分析" in prompt
+        assert "输出格式" in prompt
+        assert "title" in prompt
+        assert "script" in prompt
 
     @pytest.mark.asyncio
     async def test_system_prompt_set(self, generator, mock_llm_gateway):

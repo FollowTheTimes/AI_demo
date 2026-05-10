@@ -2,7 +2,7 @@ import json
 import copy
 import logging
 from engines.where_sql_builder import build_where_sql
-from engines.cube_utils import parse_script
+from engines.cube_utils import parse_script, normalize_tables
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +29,8 @@ class ConditionEditor:
 
         if not isinstance(script, dict):
             return conditions
+
+        script = normalize_tables(script)
 
         for table_id, table in script.get("tables", {}).items():
             where = table.get("where", {})
@@ -70,6 +72,9 @@ class ConditionEditor:
 
         if not isinstance(script, dict):
             return {"errors": [{"message": "script格式错误"}]}
+
+        script = normalize_tables(script)
+        cube["script"] = script
 
         tables = script.get("tables", {})
 

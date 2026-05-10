@@ -1,6 +1,6 @@
 import json
 import logging
-from engines.cube_utils import parse_script
+from engines.cube_utils import parse_script, normalize_tables
 
 logger = logging.getLogger(__name__)
 
@@ -28,6 +28,7 @@ class CubeValidator:
             if script is None:
                 errors.append({"path": "script", "message": "script不是合法的JSON字符串"})
             else:
+                script = normalize_tables(script)
                 self._validate_script(script, errors)
 
         return {"valid": len(errors) == 0, "errors": errors}
